@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+      <div class="row">
+	<div class="col-md-12 text-left">
+	  {% if ad %}
+	      <div id="#ads" class="ads mt-2">
+		    <div class="ad">
+		      <div class="message">
+			{% autoescape false %}
+			    {{ad.raw["message"]}}
+			    {{ad.raw["html"]}}
+			{% endautoescape %}
+		      </div>
+		      <div class="ad-metadata">
+			<a class="permalink" href="/static/ad/{{ad.fbid}}">Permalink to this ad</a>
+			<p>Sågs först: <time datetime="{{ad.created_at}}">{{ad.created_at.strftime('%Y-%m-%d')}}</time></p>
+		      </div>
+		      <div class="targeting_info">
+			<div class="targeting">
+			  <h3>Targeting Information</h3>
+			  {% autoescape false %}
+			      {% if ad.raw["targetings"] %}
+				  {% for targeting in ad.raw["targetings"] %}
+				      <div>
+					{{targeting}}
+				      </div>
+				  {% endfor %}
+			      {% endif %}
+			  {% endautoescape %}
+			</div>
+		      </div>
+		    </div>
+	      </div>
+	  {% endif %}
+	</div>
+      </div>
+    </div>
+{% endblock %}
