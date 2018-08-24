@@ -6,6 +6,12 @@ services:
       - ./dbdata:/var/lib/postgresql/data
     env_file:
       - env_file
+  memcached:
+    image: "memcached:1.5.10-alpine"
+    ports:
+      - "11211"
+    env_file:
+      - env_file
   web:
     build: ./web
     env_file:
@@ -14,6 +20,7 @@ services:
       - ./web/app:/app
     depends_on:
       - db
+      - memcached
     ports:
       - "5432:8080"
     command: flask run --host=0.0.0.0 --port=8080

@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
+{% block title %}
+    Politisk annonsering på Facebook
+{% endblock %}
 {% block body %}
     <section class="jumbotron text-center">
       <div class="container">
 	<h1 class="jumbotron-heading">Politisk annonsering på Facebook</h1>
-	<p class="lead">Politisk annonsering kan idag vara målgruppsanpassad på detaljnivå. Genom att ta hjälp av frivilliga och verktyg från ProPublica har jag i detta projekt samlat in <a href="#adsection">hundratals politiska annonser</a> från Facebook. Genom att presentera dem här kan vi lära oss mer om hur politisk annonsering går till och vilka budskap som riktas till andra målgrupper än de man själv ingår i.</p>
+	<p class="lead">Politisk annonsering kan idag vara målgruppsanpassad på detaljnivå. Genom att ta hjälp av frivilliga och verktyg från ProPublica har det samlats in <a href="#adsection">hundratals politiska annonser</a> från Facebook. Genom att presentera dem här kan vi lära oss mer om hur politisk annonsering går till och vilka budskap som riktas till andra målgrupper än de man själv ingår i.</p>
 	<p class="lead">Vill du hjälpa till att samla in annonser? Installera denna <a href="https://projects.propublica.org/political-ad-collector/">plugin för Chrome och Firefox</a> och hjälp till att rapportera in annonser du med. Insamlingen sparar ingen information om dig som person.</p>
 	<div class="row" role="main">
 	  <div class="col-md-4 offset-md-4">
@@ -25,38 +28,36 @@
     <div class="container">
       <div class="row">
 	<div class="col-sm-10 offset-sm-1 text-center">
-      <form action="/" method="get" accept-charset="utf-8" class="form-inline justify-content-center">
+	  <form action="/" method="get" accept-charset="utf-8" class="form-inline justify-content-center">
 	    <label for="advertiser" class="mr-3">Avsändare</label>
 	    <select id="advertiser" name="advertiser" class="form-control mr-3">
-		  <option value="">Alla...</option>
+	      <option value="">Alla...</option>
 	      {% for advertiser in advertisers %}
 		  {% if advertiser_filter == advertiser %}
-		  <option value="{{advertiser}}" selected>{{advertiser}}</option>
+		      <option value="{{advertiser}}" selected>{{advertiser}}</option>
 		  {% else %}
-		  <option value="{{advertiser}}">{{advertiser}}</option>
+		      <option value="{{advertiser}}">{{advertiser}}</option>
 		  {% endif %}
 	      {% endfor %}
 	    </select>
 	    <button type="submit" class="btn btn-primary">Filtrera</button>
-      </form>
-    </div>
-    </div>
+	  </form>
+	</div>
+      </div>
 
       <div class="row" id="adsection">
 	<div class="col-md-12 text-left">
 	  {% if ads %}
-	      <div id="#ads" class="ads mt-2">
+	      <div id="#ads" class="ads mt-2 d-flex flex-wrap">
 		{% for ad in ads %}
-
-		    <hr>
-		    <div class="ad">
+		    <div class="ad ml-2">
 		      <div class="message">
 			{% autoescape false %}
 			    {{ad.raw["html"]}}
 			{% endautoescape %}
 		      </div>
 		      <div class="ad-metadata">
-			<a class="permalink" href="/ad/{{ad.fbid}}">Permalänk till annons {{ad.fbid}}</a>
+			<a class="permalink" href="/ad/{{ad.fbid}}">Permalänk till {{ad.fbid}}</a>
 			<p>Sågs först: <time datetime="{{ad.created_at}}">{{ad.created_at.strftime('%Y-%m-%d')}}</time></p>
 		      </div>
 		      <div class="targeting_info">

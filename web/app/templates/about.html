@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+      <div class="row">
+	<div class="col-md-8 offset-md-2 text-left mt-5">
+	  <h1>Om politisk annonsering på Facebook</h1>
+	  <p>Annonserna har samlats in med hjälp av frivilliga som installerat en webbläsarplugin från ProPublica. Verktyget plockar ut annonser ur användarens Facebookflöde och skickar in till en databas. Där klassificeras det för att avgöra om det är en politisk annons eller en vanlig. Från databasen hämtas svensk politisk annonsering varje natt till denna webbplats.</p>
+
+	  <h2>Frågor?</h2>
+	  <h3>Visas alla politiska annonser som läggs upp på Facebook?</h3>
+	  <p>Nej, bara den som frivilliga rapporterat in. Det finns säkerligen ett stort mörkertal i annonser som riktar sig till målgrupper som inte deltar i insamlingsarbetet. <a href="https://projects.propublica.org/political-ad-collector/">Men du kan hjälpa till!</a></p>
+
+	  <h3>Varför saknas målgruppsinformation på vissa annonser?</h3>
+	  <p>Verktyget har utvecklats löpande för att kunna identifiera annonser i Facebooks webbsidor. Eftersom de ändras ibland kan det under vissa perioder blivit fel i insamlingen.</p>
+
+	  <h3>Varför står det "SpSonSsrSadS" istället för "Sponsrad"?</h3>
+	  <p>Vi tror att Facebook försöker göra det svårare för annonsblockerare. Därför är deras html-kod ibland strukturerad på ett sätt som skapar annorlunda texter.</p>
+
+	  <h3>Vad är det för skillnad mot Facebooks egna insynsinitiativ?</h3>
+	  <p>Facebook har, föredömligt, <a href="https://www.facebook.com/politicalcontentads">försökt öka insynen i politisk annonsering på Facebook</a>. Men insynstjänsten går inte att komma åt för den som inte är inloggad på Facebook. Det betyder att arkivinitiativ som t.ex. <a href="https://archive.org/">Internet Archive</a> eller <a href="https://www.kb.se/hitta-och-bestall/hitta-i-samlingarna/kulturarw3.html">Kungliga bibliotekets webbinsamling</a> inte kan komma åt informationen. Utan arkiv blir det svårt för framtida forskare att förstå hur valrörelsen 2018 utspelade sig.</p>
+	      
+	</div>
+      </div>
+    </div>
+{% endblock %}

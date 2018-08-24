@@ -8,17 +8,16 @@
 		    <div class="ad">
 		      <div class="message">
 			{% autoescape false %}
-			    {{ad.raw["message"]}}
 			    {{ad.raw["html"]}}
 			{% endautoescape %}
 		      </div>
 		      <div class="ad-metadata">
-			<a class="permalink" href="/static/ad/{{ad.fbid}}">Permalink to this ad</a>
+			<a class="permalink" href="/ad/{{ad.fbid}}">Permalänk till {{ad.fbid}}</a>
 			<p>Sågs först: <time datetime="{{ad.created_at}}">{{ad.created_at.strftime('%Y-%m-%d')}}</time></p>
 		      </div>
 		      <div class="targeting_info">
 			<div class="targeting">
-			  <h3>Targeting Information</h3>
+			  <h3>Målgruppsinformation</h3>
 			  {% autoescape false %}
 			      {% if ad.raw["targetings"] %}
 				  {% for targeting in ad.raw["targetings"] %}

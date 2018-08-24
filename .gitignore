@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+env_file
+web/app/static/ad/*
+docker-compose.override.yml
+dbdata/*
