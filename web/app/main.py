@@ -1,6 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from models import db, Ad
 from sqlalchemy.orm import load_only
+from sqlalchemy import desc, asc
 import os
 from flask_caching import Cache
 import time
@@ -34,11 +35,14 @@ def index():
 
     advertiser_filter = request.args.get('advertiser', None)
 
-    ads = Ad.query.all()
-    if advertiser_filter:
-        ads = Ad.query.filter_by(advertiser=advertiser_filter)
+    adcount = Ad.query.count()
 
-    return render_template('index.html', ads=ads, advertisers=get_advertisers(), advertiser_filter=advertiser_filter)
+    if advertiser_filter:
+        ads = Ad.query.filter_by(advertiser=advertiser_filter).order_by(desc(Ad.created_at))
+    else:
+        ads = Ad.query.order_by(desc(Ad.created_at)).all()
+
+    return render_template('index.html', ads=ads, advertisers=get_advertisers(), advertiser_filter=advertiser_filter, adcount=adcount)
 
 
 

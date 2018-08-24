@@ -38,7 +38,15 @@ def save_file(url, targetdir):
 
 def write_ad(jad):
     target = os.path.join(archive_dir, jad["id"])
-    if not os.path.exists(target) and not "Byggmax" in jad["title"] and not "Bauhaus" in jad["title"] and not "Adlibris" in jad["title"]:
+
+    stopwords = ["byggmax", "bauhaus", "storytel", "adlibris"]
+
+    if any(stopword in jad["title"].lower() for stopword in stopwords):
+        print("Skipping due to stopword for %s" % jad["id"])
+        return
+
+    # save ad files
+    if not os.path.exists(target): 
         os.makedirs(target)
         filename = jad["id"]  + ".json"
         with open(os.path.join(target, filename), 'w') as outfile:
@@ -51,7 +59,17 @@ def write_ad(jad):
         if "thumbnail" in jad.keys():
             save_file(jad["thumbnail"], target)
 
-        # clean targeting
+    else:
+        # Files for this ad already saved
+        print("Already saved files for %s" % jad["id"])
+
+
+
+    # Save ad to db
+    if session.query(Ad).filter_by(fbid=jad["id"]).count() == 0:
+        print("Saving %s to database" % jad["id"])
+
+        # clean targeting dupes
         if jad["targetings"]:
             clean_targets = []
             print("Raw targets: %s" % len(jad["targetings"]))
@@ -73,36 +91,30 @@ def write_ad(jad):
         ad.updated_at=jad["updated_at"]
 
         session.add(ad)
-        session.commit()
-
     else:
-        #This ad is already saved
-        print("Already saved %s" % jad["id"])
+        print("Already in db %s" % jad["id"])
 
 
-#try:
-headers = {'Accept-Language': 'sv-SE'}
-r = requests.get('https://projects.propublica.org/facebook-ads/ads', headers=headers)
-if r.status_code == requests.codes.ok:
-    jdata = r.json()
-    print("Found %s ads" % len(jdata["ads"]))
-    print("Total adcount: %s" % jdata["total"])
-    pages = math.ceil((jdata["total"]) / 20)
-    print("Pages: %s" % pages)
 
-    # delete old records
-    deleted_count = session.query(Ad).delete()
-    session.commit()
-    print("Deleted %s ads from db" % deleted_count)
 
-    for page in range(1, pages):
-        r = requests.get(f"https://projects.propublica.org/facebook-ads/ads?page={page}", headers=headers)
-        if r.status_code == requests.codes.ok:
-            jdata = r.json()
-            for ad in jdata["ads"]:
-                adid = ad["id"]
-                print(ad["id"])
-                write_ad(ad)
+if __name__=="__main__":
+    headers = {'Accept-Language': 'sv-SE'}
+    r = requests.get('https://projects.propublica.org/facebook-ads/ads', headers=headers)
+    if r.status_code == requests.codes.ok:
+        jdata = r.json()
+        print("Found %s ads" % len(jdata["ads"]))
+        print("Total adcount: %s" % jdata["total"])
+        pages = math.ceil((jdata["total"]) / 20)
+        print("Pages: %s" % pages)
 
-#except Exception as e:
-#    print(e)
+        for page in range(1, pages):
+            r = requests.get(f"https://projects.propublica.org/facebook-ads/ads?page={page}", headers=headers)
+            if r.status_code == requests.codes.ok:
+                jdata = r.json()
+                for ad in jdata["ads"]:
+                    adid = ad["id"]
+                    print(ad["id"])
+                    write_ad(ad)
+                
+                print("Committing")
+                session.commit()
