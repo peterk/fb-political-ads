@@ -107,7 +107,7 @@ if __name__=="__main__":
         pages = math.ceil((jdata["total"]) / 20)
         print("Pages: %s" % pages)
 
-        for page in range(1, pages):
+        for page in range(0, pages):
             r = requests.get(f"https://projects.propublica.org/facebook-ads/ads?page={page}", headers=headers)
             if r.status_code == requests.codes.ok:
                 jdata = r.json()
