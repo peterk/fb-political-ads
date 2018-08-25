@@ -1,0 +1,23 @@
+<nav aria-label="Annonsnavigering">
+  {% if adcount > ads_per_page %}
+  <ul class="pagination justify-content-center mt-3 flex-wrap">
+    {% if prev_url %}
+    <li class="page-item"><a class="page-link" href="{{ prev_url }}">Föregående</a></li>
+    {% else %}
+    <li class="page-item disabled"><a class="page-link" href="#">Föregående</a></li>
+    {% endif %}
+    {% for p in range(1, (adcount / ads_per_page)|int) %}
+    {% if p == request.args.get("page", 1)|int  %}
+    <li class="page-item active"><a class="page-link" href="#">{{p}} <span class="sr-only">(nuvarande)</span></a></li>
+    {% else %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('index', page=p, advertiser=advertiser_filter or None ) }}">{{p}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if next_url %}
+    <li class="page-item"><a class="page-link" href="{{ next_url }}">Nästa</a></li>
+    {% else %}
+    <li class="page-item disabled"><a class="page-link" href="#">Nästa</a></li>
+    {% endif %}
+  </ul>
+    {% endif %}
+</nav>

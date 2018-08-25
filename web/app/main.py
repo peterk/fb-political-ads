@@ -9,6 +9,7 @@ import time
 app = Flask(__name__)
 db.init_app(app)
 DEBUG = os.environ["FLASK_DEBUG"]
+ADS_PER_PAGE = 40
 
 POSTGRES = {
     'user': os.environ["POSTGRES_USER"],
@@ -31,23 +32,38 @@ def get_advertisers():
 
 
 @app.route("/", methods=['GET'])
+@cache.cached(timeout=60*60*12, key_prefix=view_full_path_key)
 def index():
 
     advertiser_filter = request.args.get('advertiser', None)
+    page = request.args.get('page', 1, type=int)
 
-    adcount = Ad.query.count()
+    adcount = 0
 
     if advertiser_filter:
-        ads = Ad.query.filter_by(advertiser=advertiser_filter).order_by(desc(Ad.created_at))
+        ads = Ad.query.filter_by(advertiser=advertiser_filter).order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
+        adcount = Ad.query.filter_by(advertiser=advertiser_filter).count()
     else:
-        ads = Ad.query.order_by(desc(Ad.created_at)).all()
+        ads = Ad.query.order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
+        adcount = Ad.query.count()
 
-    return render_template('index.html', ads=ads, advertisers=get_advertisers(), advertiser_filter=advertiser_filter, adcount=adcount)
+    next_url = url_for('index', page=ads.next_num, advertiser=advertiser_filter) if ads.has_next else None
+    prev_url = url_for('index', page=ads.prev_num, advertiser=advertiser_filter) if ads.has_prev else None
+
+    return render_template('index.html', \
+            ads=ads.items, \
+            advertisers=get_advertisers(), \
+            advertiser_filter=advertiser_filter, \
+            adcount=adcount, \
+            ads_per_page=ADS_PER_PAGE, \
+            next_url=next_url, \
+            prev_url=prev_url, \
+            now=time.ctime())
 
 
 
 @app.route("/ad/<string:fbid>", methods=['GET'])
-@cache.cached(timeout=60*60*24)
+@cache.cached(timeout=60*60*12)
 def ad(fbid):
     ad = Ad.query.filter_by(fbid=fbid).first() 
 
@@ -59,9 +75,25 @@ def ad(fbid):
 
 
 @app.route("/om-insamlingen", methods=['GET'])
-@cache.cached(timeout=60*60*24)
+@cache.cached(timeout=60*60*12)
 def about():
     return render_template('about.html')
+
+
+
+@app.route("/cc/<string:key>", methods=['GET'])
+def cache_clear(key):
+    """Drop entire cache (for debugging)
+    """
+    cache_key=os.environ["CACHE_CLEAR_KEY"]
+    if len(cache_key) == 0:
+        abort(500) # no key set
+
+    if key == cache_key:
+        cache.clear()
+        return "Cache cleared %s" % time.ctime()
+    else:
+        abort(401)
 
 
 

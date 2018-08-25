@@ -46,9 +46,10 @@
       </div>
 
       <div class="row" id="adsection">
-	<div class="col-md-12 text-left">
+	<div class="col-md-12">
 	  {% if ads %}
-	      <div id="#ads" class="ads mt-2 d-flex flex-wrap">
+	    {% include '_adnav.html' %}
+	      <div id="#ads" class="ads mt-2 d-flex flex-wrap text-left">
 		{% for ad in ads %}
 		    <div class="ad ml-2">
 		      <div class="message">
@@ -77,6 +78,8 @@
 		    </div>
 		{% endfor %}
 	      </div>
+	    {% include '_adnav.html' %}
+	    <p class="text-muted"><small>{{now}}</small></p>
 	  {% endif %}
 	</div>
       </div>
