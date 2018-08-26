@@ -84,6 +84,7 @@ def is_url(x):
 
 
 def save_file(url, targetdir):
+    print(f"Saving url: > {url} <")
     if is_url(url):
         r = requests.get(url)
         if r.status_code == requests.codes.ok:
@@ -191,7 +192,8 @@ if __name__=="__main__":
                         ad = normalize_data(ad)
                         if args.list:
                             # only listing them to check
-                            print(str(ad["id"]).ljust(20, " ") + "\t" + ad["advertiser"])
+                            polprob = "%.2f" % ad["political_probability"]
+                            print(str(ad["id"]).ljust(20, " ") + "\t" + polprob + "\t"  + ad["advertiser"][:20].ljust(20) + "\t" + ad["title"][:12])
                         else:
                             write_ad(ad)            
                             session.commit()
