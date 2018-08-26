@@ -38,14 +38,14 @@ def index():
     advertiser_filter = request.args.get('advertiser', None)
     page = request.args.get('page', 1, type=int)
 
-    adcount = 0
+    adcount = Ad.query.count()
+    total_adcount = adcount
 
     if advertiser_filter:
         ads = Ad.query.filter_by(advertiser=advertiser_filter).order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
         adcount = Ad.query.filter_by(advertiser=advertiser_filter).count()
     else:
         ads = Ad.query.order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
-        adcount = Ad.query.count()
 
     next_url = url_for('index', page=ads.next_num, advertiser=advertiser_filter) if ads.has_next else None
     prev_url = url_for('index', page=ads.prev_num, advertiser=advertiser_filter) if ads.has_prev else None
@@ -55,6 +55,7 @@ def index():
             advertisers=get_advertisers(), \
             advertiser_filter=advertiser_filter, \
             adcount=adcount, \
+            total_adcount=total_adcount, \
             ads_per_page=ADS_PER_PAGE, \
             next_url=next_url, \
             prev_url=prev_url, \
