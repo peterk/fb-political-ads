@@ -84,7 +84,7 @@ def is_url(x):
 
 
 def save_file(url, targetdir):
-    if is_url:
+    if is_url(url):
         r = requests.get(url)
         if r.status_code == requests.codes.ok:
             a = urlparse(url)
@@ -92,7 +92,7 @@ def save_file(url, targetdir):
             with open(os.path.join(targetdir, fname), 'wb') as f:
                 f.write(r.content)
     else:
-        print("Broken dl request for %s" % targetdir)
+        print("Broken dl request %s for %s" % (url, targetdir))
 
 
 
@@ -194,6 +194,5 @@ if __name__=="__main__":
                             print(str(ad["id"]).ljust(20, " ") + "\t" + ad["advertiser"])
                         else:
                             write_ad(ad)            
-                    print("Committing")
-                    session.commit()
+                            session.commit()
 
