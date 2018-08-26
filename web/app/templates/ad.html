@@ -26,6 +26,12 @@
 					{{targeting}}
 				      </div>
 				  {% endfor %}
+			      {% else %}
+				{% if ad.raw["targeting"] is defined %}
+				      <div>
+					{{ad.raw["targeting"]}}
+				      </div>
+			        {% endif %}
 			      {% endif %}
 			  {% endautoescape %}
 			</div>
