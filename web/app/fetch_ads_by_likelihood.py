@@ -193,7 +193,7 @@ if __name__=="__main__":
                         if args.list:
                             # only listing them to check
                             polprob = "%.2f" % ad["political_probability"]
-                            print(str(ad["id"]).ljust(20, " ") + "\t" + polprob + "\t"  + ad["advertiser"][:20].ljust(20) + "\t" + ad["title"][:12])
+                            print(str(ad["id"]).ljust(20, " ") + "\t" + polprob + "\t"  + ad["advertiser"][:20].ljust(20) + "\t" + ad["title"][:25])
                         else:
                             write_ad(ad)            
                             session.commit()
