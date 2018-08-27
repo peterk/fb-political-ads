@@ -161,6 +161,10 @@ def get_pp_session():
     return {"_fbpac-api_session":pp_sessionkey}
 
 
+def print_ad(ad):
+    polprob = "%.2f" % ad["political_probability"]
+    print(str(ad["id"]).ljust(20, " ") + "\t" + polprob + "\t"  + ad["advertiser"][:20].ljust(20) + "\t" + ad["title"][:25])
+
 
 if __name__=="__main__":
     
@@ -168,6 +172,7 @@ if __name__=="__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--list", help="Only list ads", action="store_true")
+    parser.add_argument("--new", help="Exclude existing ads while listing", action="store_true")
     parser.add_argument("--min", help="Min probapility", type=int)
     parser.add_argument("--max", help="Max probapility", type=int)
     parser.parse_args()
@@ -188,13 +193,23 @@ if __name__=="__main__":
                 r = requests.get(f"https://projects.propublica.org/fbpac-api/ads?poliprob={args.min}&maxpoliprob={args.max}&page={page}&lang=sv-SE", cookies=cookies)
                 if r.status_code == requests.codes.ok:
                     jdata = r.json()
+                    skip_count = 0
                     for ad in jdata["ads"]:
                         ad = normalize_data(ad)
                         if args.list:
-                            # only listing them to check
-                            polprob = "%.2f" % ad["political_probability"]
-                            print(str(ad["id"]).ljust(20, " ") + "\t" + polprob + "\t"  + ad["advertiser"][:20].ljust(20) + "\t" + ad["title"][:25])
+                            target = os.path.join(archive_dir, ad["id"])
+                            if args.new:
+                                if os.path.exists(target):
+                                    skip_count += 1
+                                    continue
+                                else:
+                                    print_ad(ad)
+                            else:
+                                print_ad(ad)
+
                         else:
                             write_ad(ad)            
                             session.commit()
+                    
+                    print("Skipped %s existing ads" % skip_count)
 
