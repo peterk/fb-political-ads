@@ -1,7 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from models import db, Ad
 from sqlalchemy.orm import load_only
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, func
 import os
 from flask_caching import Cache
 import time
@@ -9,7 +9,7 @@ import time
 app = Flask(__name__)
 db.init_app(app)
 DEBUG = os.environ["FLASK_DEBUG"]
-ADS_PER_PAGE = 40
+ADS_PER_PAGE = 50
 
 POSTGRES = {
     'user': os.environ["POSTGRES_USER"],
@@ -29,6 +29,11 @@ def view_full_path_key():
 @cache.cached(timeout=120, key_prefix='advertisers')
 def get_advertisers():
     return [ad.advertiser for ad in Ad.query.options(load_only("advertiser")).order_by(Ad.advertiser).distinct("advertiser").all() if ad.advertiser is not None]
+
+
+def get_advertisers_and_count():
+    return [(ad.advertiser, ad.count) for ad in Ad.query.with_entities(Ad.advertiser, func.count(Ad.advertiser).label('count')).group_by(Ad.advertiser).order_by(Ad.advertiser).all() if ad.advertiser is not None]
+
 
 
 @app.route("/", methods=['GET'])
@@ -72,6 +77,14 @@ def ad(fbid):
         return render_template('ad.html', ad=ad)
     else:
         abort(404)
+
+
+
+@app.route("/annonsorer", methods=['GET'])
+@cache.cached(timeout=60*60*12)
+def advertisers():
+    advertisers = get_advertisers_and_count()
+    return render_template('advertisers.html', advertisers=advertisers)
 
 
 

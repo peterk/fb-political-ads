@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Annonsörer - Politiska annonser{% endblock %}
+{% block body %}
+    <div class="container">
+      <div class="row">
+	<div class="col-md-12 text-left mt-5">
+	  <h1>Politiska annonsörer på Facebook</h1>
+	  <p>I tabellen listas de annonsörer och antal annonser som samlats in till ProPublicas databas.</p>
+
+	  {% if advertisers %}
+	      <div class="table-responsive">
+		<table class="table table-hover" id="advertisers">
+		  <thead>
+		    <tr>
+		      <th scope="col">Annonsör</th>
+		      <th scope="col" class="text-right">Antal</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for advertiser in advertisers %}
+			<tr>
+			  <td><a href="/?advertiser={{advertiser[0]}}">{{advertiser[0]}}</a></td>
+			  <td class="text-right">{{advertiser[1]}}</td>
+			</tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+	    {% endif %}
+	  </div>
+	</div>
+      </div>
+    </div>
+{% endblock %}
