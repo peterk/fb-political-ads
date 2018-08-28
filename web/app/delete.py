@@ -53,7 +53,7 @@ def delete_ad(fbid, dry_run = True):
 if __name__=="__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", help="Try it without doing it", action="store_true")
+    parser.add_argument("--dryrun", help="Try it without doing it", action="store_true")
     parser.add_argument('integers', metavar='N', type=int, nargs='+', help='FB Ad ids')
 
     args = parser.parse_args()
@@ -61,4 +61,4 @@ if __name__=="__main__":
     print("Working on %s" % str(ads))
 
     for adid in ads:
-        delete_ad(adid, dry_run)
+        delete_ad(adid, args.dryrun)
