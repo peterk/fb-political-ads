@@ -160,6 +160,13 @@
 .text_exposed_show {
   display: none; }
 
+.solo .text_exposed_show {
+  display: block;
+}
+.solo .text_exposed_hide {
+  display:none;
+}
+
 .mtm,
 ._dcs {
   margin-top: 10px;
