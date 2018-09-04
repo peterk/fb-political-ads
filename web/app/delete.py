@@ -41,10 +41,15 @@ def delete_ad(fbid, dry_run = True):
 
     if not dry_run:
         session.query(Ad).filter_by(fbid=str(fbid)).delete()
+        session.commit()
+        print("Deleted %s from db" % fbid)
 
         #delete folder
-        shutil.rmtree(ad_folder)
-        print("Deleted folder %s" % ad_folder)
+        if os.path.exists(ad_folder):
+            shutil.rmtree(ad_folder)
+            print("Deleted folder %s" % ad_folder)
+        else:
+            print("Skipping folder - not found")
     else:
         print("Dry run so not deleting folder %s" % ad_folder)
 
