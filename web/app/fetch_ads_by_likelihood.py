@@ -97,6 +97,14 @@ def save_file(url, targetdir):
 
 
 
+def html2text(rawhtml):
+    tree = html.fromstring(rawhtml)
+    text = tree.text_content()
+    text = text.replace("SpSonSsrSadS","")
+    return text
+
+
+
 def write_ad(jad):
     target = os.path.join(archive_dir, jad["id"])
 
@@ -114,8 +122,9 @@ def write_ad(jad):
             json.dump(jad, outfile)
 
         # write media
-        for item in jad["images"]:
-            save_file(item, target)
+        if len(jad["images"]) > 0:
+            for item in set(jad["images"]):
+                save_file(item, target)
 
         if "thumbnail" in jad.keys():
             save_file(jad["thumbnail"], target)
@@ -150,6 +159,10 @@ def write_ad(jad):
         ad.raw=jad
         ad.created_at = jad["created_at"]
         ad.updated_at=jad["updated_at"]
+        ad.plaintext = html2text(jad["html"])
+        if jad["targeting"]:
+            if len(jad["targeting"]) > 0:
+                ad.plaintarget = html2text(jad["targeting"])
 
         session.add(ad)
     else:
@@ -175,6 +188,7 @@ if __name__=="__main__":
     parser.add_argument("--new", help="Exclude existing ads while listing", action="store_true")
     parser.add_argument("--min", help="Min probapility", type=int)
     parser.add_argument("--max", help="Max probapility", type=int)
+    parser.add_argument("--only", help="Only ad matching id", type=int)
     parser.parse_args()
     args = parser.parse_args()
 
@@ -188,6 +202,8 @@ if __name__=="__main__":
 
             pages = math.ceil((jdata["total"]) / 20)
             print("Pages: %s" % pages)
+            if args.only:
+                print("Only fetching %s" % args.only)
 
             for page in range(0, pages):
                 r = requests.get(f"https://projects.propublica.org/fbpac-api/ads?poliprob={args.min}&maxpoliprob={args.max}&page={page}&lang=sv-SE", cookies=cookies)
@@ -208,8 +224,15 @@ if __name__=="__main__":
                                 print_ad(ad)
 
                         else:
-                            write_ad(ad)            
-                            session.commit()
+                            if args.only:
+                                if str(ad["id"]) == str(args.only):
+                                    write_ad(ad)
+                                    session.commit()
+                                    print("Solo ad %s saved." % ad["id"])
+                                    break
+                            else:
+                                write_ad(ad)            
+                                session.commit()
                     
                     print("Skipped %s existing ads" % skip_count)
 
