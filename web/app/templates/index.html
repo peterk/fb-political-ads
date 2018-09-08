@@ -27,10 +27,10 @@
 
     <div class="container">
       <div class="row">
-	<div class="col-sm-10 offset-sm-1 text-center">
+	<div class="col-sm-12 text-center">
 	  <form action="/" method="get" accept-charset="utf-8" class="form-inline justify-content-center">
 	    <label for="advertiser" class="mr-3">Avsändare</label>
-	    <select id="advertiser" name="advertiser" class="form-control mr-3">
+	    <select id="advertiser" name="advertiser" class="mw-100 form-control mr-3">
 	      <option value="">Alla...</option>
 	      {% for advertiser in advertisers %}
 		  {% if advertiser_filter == advertiser %}
@@ -40,6 +40,7 @@
 		  {% endif %}
 	      {% endfor %}
 	    </select>
+	    <input type="text" placeholder="Sök..." class="form-control ml-3 mr-3" value="{{search_query}}" name="q" id="q" />
 	    <button type="submit" class="btn btn-primary">Filtrera</button>
 	  </form>
 	</div>
@@ -48,10 +49,13 @@
       <div class="row" id="adsection">
 	<div class="col-md-12">
 	  {% if ads %}
-	    {% include '_adnav.html' %}
-	      <div id="#ads" class="ads mt-2 d-flex flex-wrap text-left">
+	      {% if search_query %}
+		  <p class="mt-3">Sökning på '{{search_query}}' gav {{adcount}} resultat</p>
+	      {% endif %}
+	      {% include '_adnav.html' %}
+	      <div id="#ads" class="ads mt-2 d-flex flex-wrap text-center">
 		{% for ad in ads %}
-		    <div class="ad ml-2">
+		    <div class="ad ml-3 text-left mx-auto">
 		      <div class="message">
 			{% autoescape false %}
 			    {{ad.raw["html"]}}
@@ -72,11 +76,11 @@
 				      </div>
 				  {% endfor %}
 			      {% else %}
-				{% if ad.raw["targeting"] is defined %}
+				  {% if ad.raw["targeting"] is defined %}
 				      <div>
 					{{ad.raw["targeting"]}}
 				      </div>
-			        {% endif %}
+				  {% endif %}
 			      {% endif %}
 			  {% endautoescape %}
 			</div>
@@ -84,8 +88,8 @@
 		    </div>
 		{% endfor %}
 	      </div>
-	    {% include '_adnav.html' %}
-	    <p class="text-muted"><small>{{now}}</small></p>
+	      {% include '_adnav.html' %}
+	      <p class="text-muted"><small>Ad count: {{adcount}}, {{(adcount / ads_per_page)|round(0, 'ceil')|int}} - {{now}}</small></p>
 	  {% endif %}
 	</div>
       </div>

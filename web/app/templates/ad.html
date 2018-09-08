@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}{{ad.raw["title"]}} - Politisk annons{% endblock %}
+{% block meta %}
+<meta property="og:title" content="{{ad.raw["title"]}}">
+<meta property="og:url" content="{{request.url}}">
+<meta property="og:description" content="Politisk annons från {{ad.raw["title"]}}">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{{ad.first_image()}}">
+<meta name="description" content="Politisk annons från {{ad.raw["title"]}}">
+<meta name="referrer" content="no-referrer">
+{% endblock %}
 {% block body %}
     <div class="container">
       <div class="row">

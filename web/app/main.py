@@ -1,7 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from models import db, Ad
 from sqlalchemy.orm import load_only
-from sqlalchemy import desc, asc, func
+from sqlalchemy import desc, asc, func, select
 import os
 from flask_caching import Cache
 import time
@@ -9,7 +9,7 @@ import time
 app = Flask(__name__)
 db.init_app(app)
 DEBUG = os.environ["FLASK_DEBUG"]
-ADS_PER_PAGE = 50
+ADS_PER_PAGE = 60
 
 POSTGRES = {
     'user': os.environ["POSTGRES_USER"],
@@ -20,15 +20,20 @@ POSTGRES = {
 }
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 cache = Cache(app, config={'CACHE_TYPE': 'memcached', 'CACHE_MEMCACHED_SERVERS': ('memcached:11211',)})
+
+
 
 def view_full_path_key():
     return request.full_path
 
 
+
 @cache.cached(timeout=120, key_prefix='advertisers')
 def get_advertisers():
     return [ad.advertiser for ad in Ad.query.options(load_only("advertiser")).order_by(Ad.advertiser).distinct("advertiser").all() if ad.advertiser is not None]
+
 
 
 def get_advertisers_and_count():
@@ -41,19 +46,24 @@ def get_advertisers_and_count():
 def index():
 
     advertiser_filter = request.args.get('advertiser', None)
+    search_query = request.args.get('q', "")
     page = request.args.get('page', 1, type=int)
 
-    adcount = Ad.query.count()
-    total_adcount = adcount
+    total_adcount = Ad.query.count()
+
+    query = Ad.query
+
+    if search_query:
+       query = query.filter(func.to_tsvector('swedish', Ad.plaintext).match(search_query, postgresql_regconfig='swedish'))
 
     if advertiser_filter:
-        ads = Ad.query.filter_by(advertiser=advertiser_filter).order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
-        adcount = Ad.query.filter_by(advertiser=advertiser_filter).count()
-    else:
-        ads = Ad.query.order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
-
-    next_url = url_for('index', page=ads.next_num, advertiser=advertiser_filter) if ads.has_next else None
-    prev_url = url_for('index', page=ads.prev_num, advertiser=advertiser_filter) if ads.has_prev else None
+       query = query.filter_by(advertiser=advertiser_filter)
+       
+    adcount = query.count()
+    ads = query.order_by(desc(Ad.created_at)).paginate(page, ADS_PER_PAGE, False)
+       
+    next_url = url_for('index', page=ads.next_num, advertiser=advertiser_filter, q=search_query) if ads.has_next else None
+    prev_url = url_for('index', page=ads.prev_num, advertiser=advertiser_filter, q=search_query) if ads.has_prev else None
 
     return render_template('index.html', \
             ads=ads.items, \
@@ -64,6 +74,7 @@ def index():
             ads_per_page=ADS_PER_PAGE, \
             next_url=next_url, \
             prev_url=prev_url, \
+            search_query=search_query, \
             now=time.ctime())
 
 

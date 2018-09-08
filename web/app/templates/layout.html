@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block meta %}
     <meta property="og:title" content="Politisk annonsering på Facebook">
     <meta property="og:url" content="https://www.politiskannonsering.se/">
     <meta property="og:description" content="Se hur politisk annonsering sker på Facebook inför valet">
@@ -12,6 +13,7 @@
     <meta name="description" content="Se hur politisk annonsering sker på Facebook inför valet">
     <meta name="author" content="Peter Krantz">
     <meta name="referrer" content="no-referrer">
+    {% endblock %}
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/adstyle2.css') }}" rel="stylesheet">

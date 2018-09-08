@@ -1,4 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 import os
 import json  
 from sqlalchemy.dialects.postgresql import JSON
@@ -13,13 +13,6 @@ class BaseModel(db.Model):
     def __init__(self, *args):
          super().__init__(*args)
 
-    #def __repr__(self):
-    #    """Define a base way to print models"""
-    #    return '%s(%s)' % (self.__class__.__name__, {
-    #        column: value
-    #        for column, value in self._to_dict().items()
-    #        })   
-
 
 class Ad(BaseModel):
     """A Facebook ad"""
@@ -32,6 +25,15 @@ class Ad(BaseModel):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     raw = db.Column(JSON)
+
+    plaintext = db.Column(db.String())
+    plaintarget = db.Column(db.String())
+
+    def first_image(self):
+        if self.raw["images"]:
+            return self.raw["images"][0]
+        else:
+            return "https://www.politiskannonsering.se/static/fb_politiska_annonser_banner.jpg"
 
     def raw_html(self):
         return self.raw["html"]

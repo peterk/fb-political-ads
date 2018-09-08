@@ -6,3 +6,4 @@ requests==2.19.1
 Flask-Caching==1.4.0
 pylibmc==1.5.2
 lxml==4.2.4
+SQLAlchemy-Utils==0.33.3
