@@ -189,6 +189,7 @@ if __name__=="__main__":
     parser.add_argument("--min", help="Min probapility", type=int)
     parser.add_argument("--max", help="Max probapility", type=int)
     parser.add_argument("--only", help="Only ad matching id", type=int)
+    parser.add_argument("--oc", help="Only ads containing string in name", default=[], nargs = '*')
     parser.parse_args()
     args = parser.parse_args()
 
@@ -212,8 +213,9 @@ if __name__=="__main__":
                     skip_count = 0
                     for ad in jdata["ads"]:
                         ad = normalize_data(ad)
+                        target = os.path.join(archive_dir, ad["id"])
+
                         if args.list:
-                            target = os.path.join(archive_dir, ad["id"])
                             if args.new:
                                 if os.path.exists(target):
                                     skip_count += 1
@@ -229,10 +231,27 @@ if __name__=="__main__":
                                     write_ad(ad)
                                     session.commit()
                                     print("Solo ad %s saved." % ad["id"])
-                                    break
+                                    sys.exit()
+                            elif len(args.oc) > 0:
+                                if any(word in ad["title"] for word in args.oc):
+                                    if os.path.exists(target):
+                                        skip_count += 1
+                                        continue
+                                    else:
+                                        print_ad(ad)
+                                        write_ad(ad)            
+                                        session.commit()
+                                        print("Word found, ad %s saved." % ad["id"])
                             else:
-                                write_ad(ad)            
-                                session.commit()
+                                if args.new:
+                                    if os.path.exists(target):
+                                        skip_count += 1
+                                        continue
+                                else:
+                                    print_ad(ad)
+                                    write_ad(ad)            
+                                    session.commit()
+
                     
                     print("Skipped %s existing ads" % skip_count)
 
