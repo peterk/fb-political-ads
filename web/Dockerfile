@@ -3,6 +3,7 @@ ENV LISTEN_PORT 8080
 EXPOSE 8080
 RUN apk add --no-cache git
 RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev postgresql-client libmemcached-dev zlib-dev musl-dev libxslt-dev
+RUN apk add --no-cache zip
 COPY ./app /app
 COPY ./requirements.txt ./requirements.txt
 RUN pip install --upgrade pip
