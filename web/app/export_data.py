@@ -74,7 +74,7 @@ def make_targets_xlsx(raw_data, exportfilepath):
     ws = wb.active
 
     #header
-    ws.append(["id", "advertiser", "title", "lower_page", "message", "political_probability", "Segment", "Age", "MinAge", "State", "City", "Gender", "Retargeting"])
+    ws.append(["id", "advertiser", "title", "lower_page", "message", "created_at",  "political_probability", "Segment", "Age", "MinAge", "State", "City", "Gender", "Retargeting"])
 
     for ad in raw_data:
         row = []
@@ -83,6 +83,7 @@ def make_targets_xlsx(raw_data, exportfilepath):
         row.append(ad["title"])
         row.append(ad["lower_page"])
         row.append(html2text(ad["message"]))
+        row.append(ad["created_at"])
         row.append(ad["political_probability"])
 
         target_keys = ["Segment", "Age", "MinAge", "State", "City", "Gender", "Retargeting"]
