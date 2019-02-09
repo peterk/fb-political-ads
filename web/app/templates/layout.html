@@ -21,18 +21,18 @@
 
   <body class="text-center">
     <nav class="navbar navbar-expand-lg navbar-dark justify-content-between" style="background-color: #3F7FBF;">
-      <a class="navbar-brand" href="/">Politiska annonser</a>
+      <a class="navbar-brand" href="/">Politisk annonsering på Facebook</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Visa/dölj meny">
     <span class="navbar-toggler-icon"></span>
   </button>
  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <ul class="navbar-nav ml-auto">
-	<li class="nav-item">
+	<!-- li class="nav-item">
 	  <a class="nav-link active" href="/annonsorer">Annonsörer</a>
 	</li>
 	<li class="nav-item">
 	  <a class="nav-link active" href="/om-insamlingen">Om insamlingen</a>
-	</li>
+	</li -->
 	<li class="nav-item">
 	  <a class="nav-link active" href="https://www.peterkrantz.se/">Kontakt</a>
 	</li>
@@ -40,7 +40,7 @@
     </div>
     </nav>
     {% block body %}{% endblock %}
-    <p class="mt-5">Ser du inga annonser? Missa inte att stänga av din adblocker.</p>
+    <!-- p class="mt-5">Ser du inga annonser? Missa inte att stänga av din adblocker.</p -->
     <script src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
